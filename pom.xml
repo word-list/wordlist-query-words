@@ -108,7 +108,7 @@
                 <version>${maven.shade.plugin.version}</version>
                 <configuration>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
-                    <finalName>updatefromsource</finalName>
+                    <finalName>querywords</finalName>
                     <filters>
                         <filter>
                             <artifact>*:*</artifact>
