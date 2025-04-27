@@ -51,19 +51,6 @@ public class WordQuerier {
     @Builder.Default
     private String model = "gpt-4.1-mini-2025-04-14"; // gpt-4.1-nano-2025-04-14
 
-    private String apiKey;
-
-    private OpenAIClient openAIClient;
-
-    public OpenAIClient getOpenAIClient() {
-        if (openAIClient == null) {
-            openAIClient = OpenAIOkHttpClient.builder()
-                    .apiKey(apiKey)
-                    .build();
-        }
-        return openAIClient;
-    }
-
     private BatchRequest createWordQuery(String word) {
 
         String requestId = UUID.randomUUID().toString().replace("-", "");
@@ -130,7 +117,8 @@ public class WordQuerier {
                 .file(bytes)
                 .build();
 
-        FileObject file = getOpenAIClient().files().create(fileParams);
+        OpenAIClient openAIClient = DependencyFactory.getOpenAIClient();
+        FileObject file = openAIClient.files().create(fileParams);
 
         // Update the WordQuery objects in DynamoDB with the uploaded file ID.
         List<WriteBatch> writeBatches = wordQueries.stream()
@@ -156,7 +144,7 @@ public class WordQuerier {
                 .inputFileId(file.id())
                 .build();
 
-        Batch batch = getOpenAIClient().batches().create(batchParams);
+        Batch batch = openAIClient.batches().create(batchParams);
 
         // Update the WordQuery objects in DynamoDB with the batch ID.
         writeBatches = wordQueries.stream()

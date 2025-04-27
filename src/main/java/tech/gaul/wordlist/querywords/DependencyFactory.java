@@ -2,6 +2,9 @@ package tech.gaul.wordlist.querywords;
 
 import software.amazon.awssdk.regions.Region;
 
+import com.openai.client.OpenAIClient;
+import com.openai.client.okhttp.OpenAIOkHttpClient;
+
 import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.core.SdkSystemSetting;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
@@ -34,6 +37,12 @@ public class DependencyFactory {
 
         return DynamoDbEnhancedClient.builder()
                 .dynamoDbClient(dbClient)
+                .build();
+    }
+
+    public static OpenAIClient getOpenAIClient() {
+        return OpenAIOkHttpClient.builder()
+                .apiKey(System.getenv("OPENAI_API_KEY"))
                 .build();
     }
 }
