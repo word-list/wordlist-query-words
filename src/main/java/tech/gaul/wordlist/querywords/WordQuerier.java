@@ -10,13 +10,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openai.client.OpenAIClient;
 import com.openai.client.okhttp.OpenAIOkHttpClient;
-import com.openai.models.responses.ResponseCreateParams;
-import com.openai.models.responses.ResponseCodeInterpreterToolCall.Result.Files.File;
-import com.openai.models.ChatModel;
-import com.openai.models.responses.Response;
 import com.openai.models.batches.Batch;
 import com.openai.models.batches.BatchCreateParams;
-import com.openai.models.batches.BatchCreateParams.Body;
 import com.openai.models.batches.BatchCreateParams.CompletionWindow;
 import com.openai.models.batches.BatchCreateParams.Endpoint;
 import com.openai.models.files.FileCreateParams;
@@ -27,9 +22,7 @@ import lombok.Builder;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.enhanced.dynamodb.model.WriteBatch;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import tech.gaul.wordlist.querywords.models.BatchRequest;
-import tech.gaul.wordlist.querywords.models.Word;
 import tech.gaul.wordlist.querywords.models.WordQuery;
 
 @Builder
