@@ -1,4 +1,4 @@
-package tech.gaul.wordlist.querywords.models;
+package tech.gaul.wordlist.queryword.models;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 

@@ -1,4 +1,4 @@
-package tech.gaul.wordlist.querywords;
+package tech.gaul.wordlist.queryword;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,8 +22,8 @@ import lombok.Builder;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.enhanced.dynamodb.model.WriteBatch;
-import tech.gaul.wordlist.querywords.models.BatchRequest;
-import tech.gaul.wordlist.querywords.models.WordQuery;
+import tech.gaul.wordlist.queryword.models.ActiveWordQuery;
+import tech.gaul.wordlist.queryword.models.BatchRequest;
 
 @Builder
 public class WordQuerier {
@@ -74,15 +74,15 @@ public class WordQuerier {
                 .build();
     }
 
-    public WordQuery[] createWordQueries(String[] words) {
+    public ActiveWordQuery[] createWordQueries(String[] words) {
 
         // Build JSONL file containing all requests. This is the batch.
         StringBuilder jsonlBuilder = new StringBuilder();
         ObjectMapper objectMapper = new ObjectMapper();
         DynamoDbEnhancedClient dynamoDbClient = DependencyFactory.dynamoDbClient();
-        TableSchema<WordQuery> wordQueryTableSchema = TableSchema.fromBean(WordQuery.class);
+        TableSchema<ActiveWordQuery> wordQueryTableSchema = TableSchema.fromBean(ActiveWordQuery.class);
 
-        List<WordQuery> wordQueries = new ArrayList<>();
+        List<ActiveWordQuery> wordQueries = new ArrayList<>();
 
         for (String word : words) {
             try {
@@ -90,7 +90,7 @@ public class WordQuerier {
                 jsonlBuilder.append(objectMapper.writeValueAsString(request)).append("\n");
 
                 // Create a WordQuery object and save it to DynamoDB.
-                WordQuery wordQuery = WordQuery.builder()
+                ActiveWordQuery wordQuery = ActiveWordQuery.builder()
                         .id(UUID.randomUUID().toString())
                         .word(word)
                         .batchRequestCustomId(request.getCustomId())
@@ -126,8 +126,8 @@ public class WordQuerier {
                     wordQuery.setUploadedFileId(file.id());
                     wordQuery.setStatus("Querying");
                     wordQuery.setUpdatedAt(new Date());
-                    return WriteBatch.builder(WordQuery.class)
-                            .mappedTableResource(dynamoDbClient.table("WordQueries", wordQueryTableSchema))
+                    return WriteBatch.builder(ActiveWordQuery.class)
+                            .mappedTableResource(dynamoDbClient.table("active-queries", wordQueryTableSchema))
                             .addPutItem(wordQuery)
                             .build();
                 })
@@ -152,7 +152,7 @@ public class WordQuerier {
                     wordQuery.setBatchRequestId(batch.id());
                     wordQuery.setStatus("Awaiting Response");
                     wordQuery.setUpdatedAt(new Date());
-                    return WriteBatch.builder(WordQuery.class)
+                    return WriteBatch.builder(ActiveWordQuery.class)
                             .mappedTableResource(dynamoDbClient.table("WordQueries", wordQueryTableSchema))
                             .addPutItem(wordQuery)
                             .build();
@@ -165,7 +165,7 @@ public class WordQuerier {
 
         // DB records will now be polled by another function to check for responses and process them.
 
-        return wordQueries.toArray(new WordQuery[0]);
+        return wordQueries.toArray(new ActiveWordQuery[0]);
     }
 
 }

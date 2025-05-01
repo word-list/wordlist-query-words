@@ -1,4 +1,4 @@
-package tech.gaul.wordlist.querywords.models;
+package tech.gaul.wordlist.queryword.models;
 
 import java.util.Date;
 
@@ -10,7 +10,7 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbParti
 @Builder
 @Getter
 @Setter
-public class WordQuery {
+public class ActiveWordQuery {
     
     private String id;
 

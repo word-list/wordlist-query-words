@@ -1,4 +1,4 @@
-package tech.gaul.wordlist.querywords;
+package tech.gaul.wordlist.queryword;
 
 import software.amazon.awssdk.regions.Region;
 
@@ -38,7 +38,7 @@ public class DependencyFactory {
         return DynamoDbEnhancedClient.builder()
                 .dynamoDbClient(dbClient)
                 .build();
-    }
+    }    
 
     public static OpenAIClient getOpenAIClient() {
         return OpenAIOkHttpClient.builder()
