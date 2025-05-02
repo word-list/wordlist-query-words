@@ -47,7 +47,14 @@ public class App implements RequestHandler<SQSEvent, Object> {
 
         // For queries where isForce is false, check if the word is already in the
         // database; only add a word if it doesn't already exist.
-        wordsToUpdate.addAll(getNonExistingWords(queries, wordSchema));        
+        wordsToUpdate.addAll(getNonExistingWords(queries, wordSchema));
+
+        WordQuerier wordQuerier = WordQuerier.builder()
+                .model("gpt-4.1-mini-2025-04-14")
+                .build();
+
+        wordQuerier.createWordQueries(wordsToUpdate.toArray(new String[0]));
+        
 
         return null;
     }
