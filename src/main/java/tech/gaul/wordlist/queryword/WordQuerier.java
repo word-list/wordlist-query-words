@@ -132,7 +132,8 @@ public class WordQuerier {
                                                         .addPutItem(wordQuery)
                                                         .build();
                                 })
-                                .forEach(updateFileIdBatch -> dynamoDbClient.batchWriteItem(b -> b.writeBatches(updateFileIdBatch)));
+                                .forEach(updateFileIdBatch -> dynamoDbClient
+                                                .batchWriteItem(b -> b.writeBatches(updateFileIdBatch)));
 
                 // Create the batch request using the uploaded file.
                 BatchCreateParams batchParams = BatchCreateParams.builder()
@@ -155,7 +156,8 @@ public class WordQuerier {
                                                         .addPutItem(wordQuery)
                                                         .build();
                                 })
-                                .forEach(updateBatchIdBatch -> dynamoDbClient.batchWriteItem(b -> b.writeBatches(updateBatchIdBatch)));
+                                .forEach(updateBatchIdBatch -> dynamoDbClient
+                                                .batchWriteItem(b -> b.writeBatches(updateBatchIdBatch)));
 
                 // DB records will now be polled by another function to check for responses and
                 // process them.
