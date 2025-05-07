@@ -7,7 +7,7 @@ import lombok.Setter;
 @Builder
 @Getter
 @Setter
-public class QueryWordModel {
+public class QueryWordMessage {
 
     private String word;
     private boolean force;

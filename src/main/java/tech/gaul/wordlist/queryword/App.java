@@ -13,12 +13,8 @@ import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.MappedTableResource;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.enhanced.dynamodb.model.BatchGetItemEnhancedRequest;
-import software.amazon.awssdk.enhanced.dynamodb.model.GetItemEnhancedRequest;
 import software.amazon.awssdk.enhanced.dynamodb.model.ReadBatch;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.BatchGetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.KeysAndAttributes;
-import tech.gaul.wordlist.queryword.models.QueryWordModel;
+import tech.gaul.wordlist.queryword.models.QueryWordMessage;
 import tech.gaul.wordlist.queryword.models.Word;
 
 public class App implements RequestHandler<SQSEvent, Object> {
@@ -30,9 +26,9 @@ public class App implements RequestHandler<SQSEvent, Object> {
 
         TableSchema<Word> wordSchema = TableSchema.fromBean(Word.class);
 
-        List<QueryWordModel> queries = event.getRecords().stream()
+        List<QueryWordMessage> queries = event.getRecords().stream()
                 .map(SQSEvent.SQSMessage::getBody)
-                .map(body -> objectMapper.convertValue(body, QueryWordModel.class))
+                .map(body -> objectMapper.convertValue(body, QueryWordMessage.class))
                 .toList();
 
         if (queries.isEmpty()) {
@@ -41,8 +37,8 @@ public class App implements RequestHandler<SQSEvent, Object> {
 
         // Where isForce is true, always query, so get these words first.
         List<String> wordsToUpdate = queries.stream()
-                .filter(QueryWordModel::isForce)
-                .map(QueryWordModel::getWord)
+                .filter(QueryWordMessage::isForce)
+                .map(QueryWordMessage::getWord)
                 .toList();
 
         // For queries where isForce is false, check if the word is already in the
@@ -54,15 +50,14 @@ public class App implements RequestHandler<SQSEvent, Object> {
                 .build();
 
         wordQuerier.createWordQueries(wordsToUpdate.toArray(new String[0]));
-        
 
         return null;
     }
 
-    private List<String> getNonExistingWords(List<QueryWordModel> queries, TableSchema<Word> wordSchema) {        
+    private List<String> getNonExistingWords(List<QueryWordMessage> queries, TableSchema<Word> wordSchema) {        
         List<String> checkWords = queries.stream()
                 .filter(query -> !query.isForce())
-                .map(QueryWordModel::getWord)
+                .map(QueryWordMessage::getWord)
                 .toList();
 
         DynamoDbEnhancedClient dbClient = DependencyFactory.dynamoDbClient();
