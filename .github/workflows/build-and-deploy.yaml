@@ -53,7 +53,7 @@ jobs:
       - name: Upload jar to S3
         id: upload
         run: |
-          JAR_FILE=$(find target -name "*.jar" | head -n 1)
+          JAR_FILE=$(ls -t target/*.jar | head -n 1)
           aws s3 cp "$JAR_FILE" s3://${{ vars.S3_BUCKET_NAME }}/
           echo "jar_file=$JAR_FILE" >> "$GITHUB_OUTPUT"        
 
